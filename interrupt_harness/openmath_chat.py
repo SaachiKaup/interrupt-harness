@@ -72,6 +72,46 @@ def read_summary(team: str, project: str, session: str) -> dict:
     }
 
 
+def contains(query: str, text: str) -> bool:
+    return query.casefold() in text.casefold()
+
+
+def session_records(team: str, project: str, session: str) -> list[dict]:
+    history = post("session_history", {"team": team, "project": project,
+                                        "session": session, "after": None, "limit": 50})
+    return history.get("records", [])
+
+
+def content_matches(query: str, records: list[dict]) -> bool:
+    return any(contains(query, str(record.get("text", ""))) for record in records)
+
+
+def chat_match(chat: dict, query: str, team: str, project: str) -> dict | None:
+    title = str(chat.get("title", ""))
+    session = chat.get("session")
+    if contains(query, title):
+        return {"session": session, "title": title, "matched": "title"}
+
+    records = session_records(team, project, session)
+    if content_matches(query, records):
+        return {"session": session, "title": title, "matched": "content"}
+    return None
+
+
+def find_chats(query: str, team: str = "", project: str = "", limit: int = 10) -> list[dict]:
+    team, project = team or DEFAULT_TEAM, project or DEFAULT_PROJECT
+    if not query.strip():
+        raise ValueError("query is required")
+    if not 1 <= limit <= 50:
+        raise ValueError("limit must be between 1 and 50")
+
+    response = post("project_sessions", {"team": team, "project": project,
+                                         "after": None, "limit": 50})
+    chats = response.get("sessions", [])
+    matches = (chat_match(chat, query, team, project) for chat in chats)
+    return [match for match in matches if match is not None][:limit]
+
+
 def stop_chat(team: str, project: str, session: str) -> dict:
     if not team.strip() or not project.strip() or not session.strip():
         raise ValueError("team, project, and session are required")

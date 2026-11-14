@@ -4,6 +4,7 @@ from openmath_chat import (
     DEFAULT_PROJECT,
     DEFAULT_TEAM,
     continue_chat,
+    find_chats,
     list_models,
     read_summary,
     start_chat,
@@ -32,6 +33,13 @@ def ping() -> str:
 def models() -> list[dict]:
     """List selectable model IDs and their reasoning effort choices."""
     return list_models()
+
+
+@server.tool()
+def find_sessions(query: str, limit: int = 10, team: str = DEFAULT_TEAM,
+                  project: str = DEFAULT_PROJECT) -> list[dict]:
+    """Find recent project chats by title or their first page of history."""
+    return find_chats(query, team=team, project=project, limit=limit)
 
 
 @server.tool()
