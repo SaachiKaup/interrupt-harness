@@ -1,5 +1,6 @@
 .pixi/*
 !.pixi/config.toml
 __pycache__/
+.env
 
 **/plans/**
