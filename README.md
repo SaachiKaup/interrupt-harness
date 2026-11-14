@@ -16,4 +16,6 @@ OPENMATHOS_PROJECT=your-project-id
 
 The `.env` file is ignored by Git. Each teammate should use the IDs for their own team and project. Restart Codex after changing the file so its MCP server reloads the settings.
 
+Use the `continue` tool with an existing session ID and a new prompt to send another turn without creating a new chat. It does not reject a session because of an earlier stop request.
+
 Start with [the current end-to-end plan](plans/current.md). [Previous drafts](plans/previous-drafts/README.md) preserve the earlier CLI, tmux, visible UI, in-host, and monitoring proposals. Earlier investigation remains in [the OpenMathOS handoff](../open-math-experiment/docs/conversation-handoff.md); it is a source note, not the current implementation location.

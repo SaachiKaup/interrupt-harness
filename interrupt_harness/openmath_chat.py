@@ -79,6 +79,24 @@ def stop_chat(team: str, project: str, session: str) -> dict:
     return {"team": team, "project": project, "session": session, "status": "stop request accepted"}
 
 
+def continue_chat(prompt: str, session: str, team: str = "", project: str = "",
+                  model: str = "", effort: str = "") -> dict:
+    team = team or DEFAULT_TEAM
+    project = project or DEFAULT_PROJECT
+    if not team.strip() or not project.strip() or not session.strip() or not prompt.strip():
+        raise ValueError("team, project, session, and prompt are required")
+
+    answer = send_prompt(team, project, session, prompt, model, effort)
+    return {
+        "team": team,
+        "project": project,
+        "session": session,
+        "message_id": answer["message_id"],
+        "requested_model": model or None,
+        "requested_effort": effort or None,
+    }
+
+
 def start_chat(prompt: str, team: str = "", project: str = "",
                title: str = "", model: str = "", effort: str = "") -> dict:
     team = team or DEFAULT_TEAM
